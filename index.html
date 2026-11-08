@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#141124">
+  <title>Пук-машина</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Inter, ui-rounded, "Segoe UI", system-ui, sans-serif;
+      background: #141124;
+      color: #fff;
+      font-synthesis: none;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 50% 42%, #30234f 0, transparent 48%),
+        radial-gradient(ellipse at 10% 100%, #302042 0, transparent 42%),
+        #141124;
+    }
+
+    .app {
+      width: min(100% - 32px, 460px);
+      padding: 38px 28px 30px;
+      text-align: center;
+      border: 1px solid #ffffff17;
+      border-radius: 32px;
+      background: linear-gradient(155deg, #211c35eF, #191629f2);
+      box-shadow: 0 28px 90px #08061185, inset 0 1px #ffffff12;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: #b7a4ee;
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: .19em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.35rem, 11vw, 3.3rem);
+      font-weight: 900;
+      letter-spacing: -.065em;
+      line-height: 1;
+    }
+
+    .subtitle {
+      margin: 13px 0 28px;
+      color: #b7b2c8;
+      font-size: .98rem;
+    }
+
+    .button-wrap {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      margin: 0 auto 25px;
+    }
+
+    .button-wrap::before {
+      position: absolute;
+      inset: 12px;
+      border: 1px solid #cf9cff35;
+      border-radius: 50%;
+      content: "";
+      animation: breathe 3s ease-in-out infinite;
+    }
+
+    .fart-button {
+      position: absolute;
+      inset: 25px;
+      display: grid;
+      place-items: center;
+      width: calc(100% - 50px);
+      height: calc(100% - 50px);
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #c879ff, #873cff 68%, #682be0);
+      box-shadow: 0 12px 0 #5123b7, 0 20px 46px #8f45ff55, inset 0 2px 2px #ffffff65;
+      color: white;
+      cursor: pointer;
+      transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .fart-button:hover { filter: brightness(1.09); }
+    .fart-button:active, .fart-button.is-playing {
+      transform: translateY(9px) scale(.97);
+      box-shadow: 0 3px 0 #5123b7, 0 9px 24px #8f45ff44, inset 0 2px 2px #ffffff65;
+    }
+    .fart-button:focus-visible { outline: 3px solid white; outline-offset: 7px; }
+
+    .emoji {
+      display: block;
+      font-size: 4.65rem;
+      line-height: 1;
+      filter: drop-shadow(0 5px 3px #47218b55);
+      transition: transform .2s ease;
+    }
+
+    .fart-button.is-playing .emoji { transform: rotate(-12deg) scale(1.14); }
+
+    .status {
+      min-height: 24px;
+      margin: 0 0 22px;
+      color: #d3c8ec;
+      font-size: .9rem;
+    }
+
+    .volume {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 270px;
+      margin: 0 auto;
+      color: #b7b2c8;
+      font-size: .85rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 5px;
+      border-radius: 9px;
+      accent-color: #bd7aff;
+      cursor: pointer;
+    }
+
+    .counter {
+      margin: 23px 0 0;
+      color: #928ba8;
+      font-size: .83rem;
+    }
+
+    .counter strong { color: #e0c3ff; font-variant-numeric: tabular-nums; }
+
+    @keyframes breathe {
+      50% { transform: scale(1.08); opacity: .48; }
+    }
+
+    @media (max-width: 380px) {
+      .app { padding: 32px 20px 25px; }
+      .button-wrap { width: 195px; height: 195px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <p class="eyebrow">Звуковая лаборатория</p>
+    <h1>Пук-машина</h1>
+    <p class="subtitle">Нажми. Не стесняйся. Это приложение.</p>
+
+    <div class="button-wrap">
+      <button class="fart-button" id="fart" type="button" aria-label="Издать звук пука">
+        <span class="emoji" aria-hidden="true">💨</span>
+      </button>
+    </div>
+    <p class="status" id="status" aria-live="polite">Готова к запуску</p>
+
+    <label class="volume" for="volume">
+      <span>🔈</span>
+      <input id="volume" type="range" min="0" max="100" value="65" aria-label="Громкость">
+      <span>🔊</span>
+    </label>
+    <p class="counter">Сделано пусков: <strong id="count">0</strong></p>
+  </main>
+
+  <script>
+    const button = document.querySelector("#fart");
+    const status = document.querySelector("#status");
+    const volume = document.querySelector("#volume");
+    const countLabel = document.querySelector("#count");
+    let audioContext;
+    let count = 0;
+
+    function makeFart() {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) {
+        status.textContent = "Этот браузер не поддерживает звук";
+        return;
+      }
+
+      audioContext ||= new AudioContext();
+      audioContext.resume();
+
+      const now = audioContext.currentTime;
+      const duration = 0.8 + Math.random() * 0.5;
+      const loudness = Number(volume.value) / 100;
+      const pitch = 48 + Math.random() * 28;
+      const curveLength = 256;
+      const pulseCurve = new Float32Array(curveLength);
+      const flutterRate = 11 + Math.random() * 3;
+      const flutterPhase = Math.random() * Math.PI * 2;
+
+      for (let i = 0; i < curveLength; i++) {
+        const progress = i / (curveLength - 1);
+        const fade = Math.min(1, progress * 24) * Math.pow(1 - progress, 1.1);
+        const flutterWave = (1 + Math.sin(
+          progress * duration * flutterRate * Math.PI * 2 + flutterPhase
+        )) / 2;
+        const flutter = 0.12 + 0.88 * Math.pow(flutterWave, 1.5);
+        pulseCurve[i] = Math.max(0, fade * flutter);
+      }
+
+      const length = Math.ceil(audioContext.sampleRate * duration);
+      const buffer = audioContext.createBuffer(1, length, audioContext.sampleRate);
+      const samples = buffer.getChannelData(0);
+      let coloredNoise = 0;
+
+      for (let i = 0; i < length; i++) {
+        const progress = i / length;
+        coloredNoise = coloredNoise * 0.72 + (Math.random() * 2 - 1) * 0.28;
+        samples[i] = coloredNoise * Math.max(0, 1 - progress);
+      }
+
+      const source = audioContext.createBufferSource();
+      const noiseFilter = audioContext.createBiquadFilter();
+      const noiseGain = audioContext.createGain();
+      const oscillator = audioContext.createOscillator();
+      const waveshaper = audioContext.createWaveShaper();
+      const rumbleFilter = audioContext.createBiquadFilter();
+      const rumbleGain = audioContext.createGain();
+      const output = audioContext.createGain();
+      const distortion = new Float32Array(256);
+
+      for (let i = 0; i < distortion.length; i++) {
+        const x = (i * 2) / (distortion.length - 1) - 1;
+        distortion[i] = Math.tanh(x * 3);
+      }
+
+      source.buffer = buffer;
+      noiseFilter.type = "bandpass";
+      noiseFilter.frequency.setValueAtTime(520, now);
+      noiseFilter.frequency.exponentialRampToValueAtTime(260, now + duration);
+      noiseFilter.Q.value = 0.7;
+      noiseGain.gain.setValueCurveAtTime(pulseCurve, now, duration);
+
+      oscillator.type = "sawtooth";
+      oscillator.frequency.setValueAtTime(pitch, now);
+      oscillator.frequency.exponentialRampToValueAtTime(pitch * 0.72, now + duration);
+      waveshaper.curve = distortion;
+      rumbleFilter.type = "lowpass";
+      rumbleFilter.frequency.value = 330;
+      rumbleGain.gain.setValueCurveAtTime(pulseCurve, now, duration);
+      output.gain.value = loudness * 0.7;
+
+      source.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(output);
+      oscillator.connect(waveshaper);
+      waveshaper.connect(rumbleFilter);
+      rumbleFilter.connect(rumbleGain);
+      rumbleGain.connect(output);
+      output.connect(audioContext.destination);
+      source.start(now);
+      source.stop(now + duration);
+      oscillator.start(now);
+      oscillator.stop(now + duration);
+
+      button.classList.add("is-playing");
+      window.setTimeout(() => button.classList.remove("is-playing"), duration * 1000);
+      countLabel.textContent = String(++count);
+      status.textContent = "Пуууф! Ещё раз?";
+    }
+
+    button.addEventListener("click", makeFart);
+  </script>
+</body>
+</html>
