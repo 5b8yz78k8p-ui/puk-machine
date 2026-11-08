@@ -276,21 +276,26 @@
       audioContext.resume();
 
       const now = audioContext.currentTime;
-      const duration = 0.8 + Math.random() * 0.5;
+      const duration = 1.05 + Math.random() * 0.55;
       const loudness = Number(volume.value) / 100;
-      const pitch = 48 + Math.random() * 28;
+      const pitch = 54 + Math.random() * 20;
       const curveLength = 256;
       const pulseCurve = new Float32Array(curveLength);
-      const flutterRate = 11 + Math.random() * 3;
+      const flutterRate = 7 + Math.random() * 3;
       const flutterPhase = Math.random() * Math.PI * 2;
+      const wobbleRate = 15 + Math.random() * 8;
+      const wobblePhase = Math.random() * Math.PI * 2;
 
       for (let i = 0; i < curveLength; i++) {
         const progress = i / (curveLength - 1);
-        const fade = Math.min(1, progress * 24) * Math.pow(1 - progress, 1.1);
+        const fade = Math.min(1, progress * 20) * Math.pow(1 - progress, 0.8);
         const flutterWave = (1 + Math.sin(
           progress * duration * flutterRate * Math.PI * 2 + flutterPhase
         )) / 2;
-        const flutter = 0.12 + 0.88 * Math.pow(flutterWave, 1.5);
+        const wobbleWave = (1 + Math.sin(
+          progress * duration * wobbleRate * Math.PI * 2 + wobblePhase
+        )) / 2;
+        const flutter = 0.08 + 0.72 * Math.pow(flutterWave, 1.6) + 0.2 * wobbleWave;
         pulseCurve[i] = Math.max(0, fade * flutter);
       }
 
@@ -314,6 +319,7 @@
       const rumbleGain = audioContext.createGain();
       const output = audioContext.createGain();
       const distortion = new Float32Array(256);
+      const bubbleCount = 5 + Math.floor(Math.random() * 4);
 
       for (let i = 0; i < distortion.length; i++) {
         const x = (i * 2) / (distortion.length - 1) - 1;
@@ -329,12 +335,12 @@
 
       oscillator.type = "sawtooth";
       oscillator.frequency.setValueAtTime(pitch, now);
-      oscillator.frequency.exponentialRampToValueAtTime(pitch * 0.72, now + duration);
+      oscillator.frequency.exponentialRampToValueAtTime(pitch * 0.58, now + duration);
       waveshaper.curve = distortion;
       rumbleFilter.type = "lowpass";
-      rumbleFilter.frequency.value = 330;
+      rumbleFilter.frequency.value = 420;
       rumbleGain.gain.setValueCurveAtTime(pulseCurve, now, duration);
-      output.gain.value = loudness * 0.7;
+      output.gain.value = loudness * 0.62;
 
       source.connect(noiseFilter);
       noiseFilter.connect(noiseGain);
@@ -348,6 +354,30 @@
       source.stop(now + duration);
       oscillator.start(now);
       oscillator.stop(now + duration);
+
+      for (let i = 0; i < bubbleCount; i++) {
+        const start = now + 0.08 + Math.random() * (duration - 0.22);
+        const bubbleDuration = 0.07 + Math.random() * 0.15;
+        const bubble = audioContext.createOscillator();
+        const bubbleFilter = audioContext.createBiquadFilter();
+        const bubbleGain = audioContext.createGain();
+        const bubblePitch = 115 + Math.random() * 125;
+
+        bubble.type = "sine";
+        bubble.frequency.setValueAtTime(bubblePitch, start);
+        bubble.frequency.exponentialRampToValueAtTime(bubblePitch * 0.48, start + bubbleDuration);
+        bubbleFilter.type = "lowpass";
+        bubbleFilter.frequency.value = 520;
+        bubbleGain.gain.setValueAtTime(0.001, start);
+        bubbleGain.gain.linearRampToValueAtTime(loudness * 0.2, start + bubbleDuration * 0.18);
+        bubbleGain.gain.exponentialRampToValueAtTime(0.001, start + bubbleDuration);
+
+        bubble.connect(bubbleFilter);
+        bubbleFilter.connect(bubbleGain);
+        bubbleGain.connect(output);
+        bubble.start(start);
+        bubble.stop(start + bubbleDuration);
+      }
 
       button.classList.add("is-playing");
       window.setTimeout(() => button.classList.remove("is-playing"), duration * 1000);
