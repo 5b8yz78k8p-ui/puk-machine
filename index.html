@@ -3,15 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#141124">
+  <meta name="theme-color" content="#090b08">
   <title>Пук-машина</title>
   <style>
     :root {
       color-scheme: dark;
       font-family: Inter, ui-rounded, "Segoe UI", system-ui, sans-serif;
-      background: #141124;
-      color: #fff;
+      background: #090b08;
+      color: #f2f5e9;
       font-synthesis: none;
+      --lime: #c8ff35;
+      --muted: #898f7f;
+      --panel: #11140f;
     }
 
     * { box-sizing: border-box; }
@@ -22,137 +25,207 @@
       margin: 0;
       display: grid;
       place-items: center;
-      overflow: hidden;
+      overflow-x: hidden;
       background:
-        radial-gradient(ellipse at 50% 42%, #30234f 0, transparent 48%),
-        radial-gradient(ellipse at 10% 100%, #302042 0, transparent 42%),
-        #141124;
+        radial-gradient(ellipse at 50% 44%, #25301455 0, transparent 43%),
+        radial-gradient(circle at 50% 50%, #c8ff3508 1px, transparent 1.5px),
+        #090b08;
+      background-size: auto, 26px 26px, auto;
     }
 
     .app {
-      width: min(100% - 32px, 460px);
-      padding: 38px 28px 30px;
+      position: relative;
+      width: min(100% - 32px, 470px);
+      padding: 32px 30px 26px;
+      overflow: hidden;
       text-align: center;
-      border: 1px solid #ffffff17;
-      border-radius: 32px;
-      background: linear-gradient(155deg, #211c35eF, #191629f2);
-      box-shadow: 0 28px 90px #08061185, inset 0 1px #ffffff12;
+      border: 1px solid #c8ff352b;
+      border-radius: 24px;
+      background: linear-gradient(145deg, #141810, #0d100c 72%);
+      box-shadow: 0 30px 100px #000b, 0 0 70px #a5e7210d, inset 0 1px #ffffff0b;
+    }
+
+    .app::before, .app::after {
+      position: absolute;
+      width: 56px;
+      height: 56px;
+      border-color: #c8ff3570;
+      border-style: solid;
+      content: "";
+      pointer-events: none;
+    }
+
+    .app::before {
+      top: 13px;
+      left: 13px;
+      border-width: 1px 0 0 1px;
+      border-radius: 9px 0 0;
+    }
+
+    .app::after {
+      right: 13px;
+      bottom: 13px;
+      border-width: 0 1px 1px 0;
+      border-radius: 0 0 9px;
     }
 
     .eyebrow {
-      margin: 0 0 8px;
-      color: #b7a4ee;
-      font-size: .75rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 18px;
+      color: var(--lime);
+      font-size: .68rem;
       font-weight: 800;
-      letter-spacing: .19em;
+      letter-spacing: .2em;
       text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--lime);
+      box-shadow: 0 0 12px #c8ff35b3;
+      content: "";
     }
 
     h1 {
       margin: 0;
-      font-size: clamp(2.35rem, 11vw, 3.3rem);
-      font-weight: 900;
-      letter-spacing: -.065em;
-      line-height: 1;
+      font-size: clamp(2.8rem, 12vw, 4.2rem);
+      font-weight: 950;
+      letter-spacing: -.085em;
+      line-height: .9;
+    }
+
+    h1 span {
+      display: block;
+      color: var(--lime);
+      text-shadow: 0 0 32px #c8ff3529;
     }
 
     .subtitle {
-      margin: 13px 0 28px;
-      color: #b7b2c8;
-      font-size: .98rem;
+      margin: 17px 0 24px;
+      color: #a4a996;
+      font-size: .92rem;
     }
 
     .button-wrap {
       position: relative;
-      width: 220px;
-      height: 220px;
-      margin: 0 auto 25px;
-    }
-
-    .button-wrap::before {
-      position: absolute;
-      inset: 12px;
-      border: 1px solid #cf9cff35;
-      border-radius: 50%;
-      content: "";
-      animation: breathe 3s ease-in-out infinite;
-    }
-
-    .fart-button {
-      position: absolute;
-      inset: 25px;
+      width: 224px;
+      height: 224px;
+      margin: 0 auto 16px;
       display: grid;
       place-items: center;
-      width: calc(100% - 50px);
-      height: calc(100% - 50px);
-      padding: 0;
-      border: 0;
+    }
+
+    .button-wrap::before, .button-wrap::after {
+      position: absolute;
+      border: 1px solid #c8ff3527;
       border-radius: 50%;
-      background: linear-gradient(145deg, #c879ff, #873cff 68%, #682be0);
-      box-shadow: 0 12px 0 #5123b7, 0 20px 46px #8f45ff55, inset 0 2px 2px #ffffff65;
-      color: white;
+      content: "";
+      pointer-events: none;
+    }
+
+    .button-wrap::before { inset: 5px; animation: breathe 3.2s ease-in-out infinite; }
+    .button-wrap::after { inset: 16px; border-style: dashed; opacity: .48; }
+
+    .fart-button {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      place-content: center;
+      gap: 4px;
+      width: 164px;
+      height: 164px;
+      padding: 0;
+      border: 1px solid #dcff8b;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 30%, #1c2611, #0d110a 72%);
+      box-shadow: 0 0 0 7px #c8ff3512, 0 0 36px #a9ff293b, inset 0 0 26px #c8ff3517;
+      color: var(--lime);
       cursor: pointer;
-      transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+      transition: transform .14s ease, box-shadow .14s ease, background .14s ease;
       -webkit-tap-highlight-color: transparent;
     }
 
-    .fart-button:hover { filter: brightness(1.09); }
+    .fart-button:hover {
+      transform: scale(1.035);
+      background: radial-gradient(circle at 50% 30%, #263517, #0d110a 72%);
+      box-shadow: 0 0 0 9px #c8ff3517, 0 0 54px #a9ff2959, inset 0 0 32px #c8ff3525;
+    }
+
     .fart-button:active, .fart-button.is-playing {
-      transform: translateY(9px) scale(.97);
-      box-shadow: 0 3px 0 #5123b7, 0 9px 24px #8f45ff44, inset 0 2px 2px #ffffff65;
+      transform: scale(.94);
+      box-shadow: 0 0 0 4px #c8ff3512, 0 0 22px #a9ff2940, inset 0 0 34px #c8ff3530;
     }
-    .fart-button:focus-visible { outline: 3px solid white; outline-offset: 7px; }
 
-    .emoji {
-      display: block;
-      font-size: 4.65rem;
+    .fart-button:focus-visible { outline: 3px solid #f2f5e9; outline-offset: 8px; }
+
+    .button-title {
+      font-size: 2.4rem;
+      font-weight: 950;
+      letter-spacing: -.08em;
       line-height: 1;
-      filter: drop-shadow(0 5px 3px #47218b55);
-      transition: transform .2s ease;
+      text-shadow: 0 0 22px #c8ff3559;
     }
 
-    .fart-button.is-playing .emoji { transform: rotate(-12deg) scale(1.14); }
+    .button-caption {
+      color: #a4c76d;
+      font-size: .58rem;
+      font-weight: 800;
+      letter-spacing: .25em;
+    }
 
     .status {
-      min-height: 24px;
+      min-height: 22px;
       margin: 0 0 22px;
-      color: #d3c8ec;
-      font-size: .9rem;
+      color: #c4caaf;
+      font-size: .85rem;
+    }
+
+    .controls {
+      padding: 15px 16px 13px;
+      border: 1px solid #ffffff10;
+      border-radius: 14px;
+      background: #ffffff04;
     }
 
     .volume {
       display: flex;
       align-items: center;
       gap: 12px;
-      max-width: 270px;
+      max-width: 290px;
       margin: 0 auto;
-      color: #b7b2c8;
-      font-size: .85rem;
+      color: #c5cbb8;
+      font-size: .82rem;
     }
 
     input[type="range"] {
       width: 100%;
       height: 5px;
       border-radius: 9px;
-      accent-color: #bd7aff;
+      accent-color: var(--lime);
       cursor: pointer;
     }
 
     .counter {
-      margin: 23px 0 0;
-      color: #928ba8;
-      font-size: .83rem;
+      margin: 13px 0 0;
+      color: var(--muted);
+      font-size: .76rem;
+      letter-spacing: .02em;
     }
 
-    .counter strong { color: #e0c3ff; font-variant-numeric: tabular-nums; }
+    .counter strong { color: var(--lime); font-variant-numeric: tabular-nums; }
 
     @keyframes breathe {
-      50% { transform: scale(1.08); opacity: .48; }
+      50% { transform: scale(1.07); opacity: .52; }
     }
 
     @media (max-width: 380px) {
-      .app { padding: 32px 20px 25px; }
-      .button-wrap { width: 195px; height: 195px; }
+      .app { padding: 28px 20px 22px; }
+      .button-wrap { width: 204px; height: 204px; }
+      .fart-button { width: 150px; height: 150px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -162,23 +235,26 @@
 </head>
 <body>
   <main class="app">
-    <p class="eyebrow">Звуковая лаборатория</p>
-    <h1>Пук-машина</h1>
-    <p class="subtitle">Нажми. Не стесняйся. Это приложение.</p>
+    <p class="eyebrow">Звуковая лаборатория / 001</p>
+    <h1>ПУК-<span>МАШИНА</span></h1>
+    <p class="subtitle">Нажми кнопку. Пусть звучит.</p>
 
     <div class="button-wrap">
       <button class="fart-button" id="fart" type="button" aria-label="Издать звук пука">
-        <span class="emoji" aria-hidden="true">💨</span>
+        <span class="button-title" aria-hidden="true">ПУК</span>
+        <span class="button-caption" aria-hidden="true">НАЖМИ</span>
       </button>
     </div>
     <p class="status" id="status" aria-live="polite">Готова к запуску</p>
 
-    <label class="volume" for="volume">
-      <span>🔈</span>
-      <input id="volume" type="range" min="0" max="100" value="65" aria-label="Громкость">
-      <span>🔊</span>
-    </label>
-    <p class="counter">Сделано пусков: <strong id="count">0</strong></p>
+    <div class="controls">
+      <label class="volume" for="volume">
+        <span>−</span>
+        <input id="volume" type="range" min="0" max="100" value="65" aria-label="Громкость">
+        <span>+</span>
+      </label>
+      <p class="counter">ВСЕГО ЗВУКОВ: <strong id="count">0</strong></p>
+    </div>
   </main>
 
   <script>
